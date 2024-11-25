@@ -6,8 +6,6 @@ LDFLAGS :=
 # Directories
 BUILD_DIR := build
 OBJ_DIR := $(BUILD_DIR)/bin
-SERVER_OBJ_DIR := $(OBJ_DIR)/server
-CLIENT_OBJ_DIR := $(OBJ_DIR)/client
 SERVER_BUILD_DIR := $(BUILD_DIR)/server
 CLIENT_BUILD_DIR := $(BUILD_DIR)/client
 
@@ -21,8 +19,8 @@ SERVER_SRC := $(shell find $(SERVER_SRC_DIR) -name "*.cpp") $(shell find $(COMMO
 CLIENT_SRC := $(shell find $(CLIENT_SRC_DIR) -name "*.cpp") $(shell find $(COMMON_SRC_DIR) -name "*.cpp")
 
 # Create object files list
-SERVER_OBJ := $(SERVER_SRC:%.cpp=$(SERVER_OBJ_DIR)/%.o)
-CLIENT_OBJ := $(CLIENT_SRC:%.cpp=$(CLIENT_OBJ_DIR)/%.o)
+SERVER_OBJ := $(SERVER_SRC:%.cpp=$(OBJ_DIR)/%.o)
+CLIENT_OBJ := $(CLIENT_SRC:%.cpp=$(OBJ_DIR)/%.o)
 
 # Targets
 SERVER_TARGET := $(SERVER_BUILD_DIR)/server
@@ -40,7 +38,7 @@ $(SERVER_TARGET): $(SERVER_OBJ)
 	@mkdir -p $(dir $@)
 	$(CXX) $(LDFLAGS) $^ -o $@
 
-$(SERVER_OBJ_DIR)/%.o: %.cpp
+$(OBJ_DIR)/%.o: %.cpp
 	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
@@ -51,7 +49,7 @@ $(CLIENT_TARGET): $(CLIENT_OBJ)
 	@mkdir -p $(dir $@)
 	$(CXX) $(LDFLAGS) $^ -o $@
 
-$(CLIENT_OBJ_DIR)/%.o: %.cpp
+$(OBJ_DIR)/%.o: %.cpp
 	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
