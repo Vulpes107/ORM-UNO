@@ -1,10 +1,14 @@
 #include <iostream>
-#include <test.hpp>
-#include <testLib2.hpp>
+#include <TCP/Server.hpp>
 
-int main()
-{
+
+int main() {
     using namespace std;
-    cout<<"test: "<<test(1,2)<<endl;
-    cout<<"test1: "<<test1(2)<<endl;
+    Server server;
+    char buf[256];
+    int client_sock = server.waitForConnection();
+    int received_size = server.receive(client_sock, buf, 256);
+    server.send(client_sock, buf, received_size);
+    cout<<buf<<endl;
+
 }
