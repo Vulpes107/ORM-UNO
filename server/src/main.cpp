@@ -1,5 +1,5 @@
 #include <iostream>
-#include <TCP/Server.hpp>
+#include <Server.hpp>
 
 
 int main() {

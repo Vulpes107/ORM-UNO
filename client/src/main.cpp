@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string.h>
-#include "TCP/Client.hpp"
+#include "Client.hpp"
 
 int main() {
    using namespace std;

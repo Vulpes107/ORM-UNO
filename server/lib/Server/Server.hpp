@@ -1,7 +1,5 @@
 #include<arpa/inet.h> //inet_addr
 
-#include <list>
-
 class Server {
 private:
     int socket_desc;

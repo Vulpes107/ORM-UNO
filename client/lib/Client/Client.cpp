@@ -7,7 +7,7 @@
 
 #include <cassert>    //for assert
 
-#include "config.hpp"
+#include <TCP/config.hpp>
 #include "Client.hpp"
 
 Client::Client() {
