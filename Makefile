@@ -2,6 +2,7 @@
 CXX := g++
 CXXFLAGS := -Wall -Wextra -std=c++17
 LDFLAGS := 
+LDLIBS := -lm -pthread
 
 # Directories
 BIN_DIR := bin
@@ -44,7 +45,7 @@ server: $(SERVER_TARGET)
 
 $(SERVER_TARGET): $(SERVER_OBJ)
 	@mkdir -p $(dir $@)
-	$(CXX) $(LDFLAGS) $^ -o $@
+	$(CXX) $(LDFLAGS) $(LDLIBS) $^ -o $@
 
 $(SERVER_OBJ_DIR)/%.o: %.cpp
 	@mkdir -p $(dir $@)
@@ -55,7 +56,7 @@ client: $(CLIENT_TARGET)
 
 $(CLIENT_TARGET): $(CLIENT_OBJ)
 	@mkdir -p $(dir $@)
-	$(CXX) $(LDFLAGS) $^ -o $@
+	$(CXX) $(LDFLAGS) $(LDLIBS) $^ -o $@
 
 $(CLIENT_OBJ_DIR)/%.o: %.cpp
 	@mkdir -p $(dir $@)
