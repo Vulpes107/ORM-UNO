@@ -1,7 +1,7 @@
 #include <sys/socket.h> //socket
 #include <fcntl.h>      //for open
 #include <unistd.h>     //for close
-#include <cassert>    //for assert
+#include <cassert>      //for assert
 #include <stdexcept>
 #include <iostream>
 #include <cerrno>
@@ -14,8 +14,6 @@
 Client::Client() {
     sock_fd = socket(AF_INET, SOCK_STREAM, 0);
     assert(sock_fd != -1);  // Failed to create a socket
-    
-    std::cout << "Socket created" << std::endl;
 
     server.sin_family = AF_INET;
     server.sin_addr.s_addr = inet_addr(SERVER_ADDR);
@@ -29,7 +27,13 @@ Client::~Client() {
 }
 
 bool Client::connectToServer() {
-    return connect(sock_fd, (struct sockaddr*)&server, sizeof(server)) != -1;
+    bool return_value = connect(sock_fd, (struct sockaddr*)&server, sizeof(server)) != -1;
+    if (return_value) {
+        char *ip = inet_ntoa(server.sin_addr);
+        uint16_t port = ntohs(server.sin_port);
+        std::cout << "Connected to " << ip << ":" << port << std::endl;
+    }
+    return return_value;
 }
 
 int Client::receive(void *buf, const size_t size) {
