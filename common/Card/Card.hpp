@@ -2,6 +2,7 @@
 #define CARD_HPP
 
 #include <string>
+#include <vector>
 
 // Enumeration for UNO card colors
 enum class Color {
@@ -42,6 +43,8 @@ public:
 
     // Utility to get card description
     std::string toString() const;
+
+    static Card parseCardData(std::vector<std::string> tokens);
 };
 
 #endif // CARD_HPP
