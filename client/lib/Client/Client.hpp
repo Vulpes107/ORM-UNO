@@ -12,7 +12,7 @@ public:
     Client();
     ~Client();
 
-    int connectToServer();
+    bool connectToServer();
     int receive(void *client_message, const size_t size);
     int send(const void *buf, const size_t size);
 };
