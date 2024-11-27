@@ -1,11 +1,14 @@
-#include <stdio.h>
-#include <string.h>    //strlen
-#include <unistd.h>    //write
+#include <unistd.h>
 #include <sys/socket.h>
 #include <cassert>
+#include <stdexcept>
+#include <iostream>
+#include <cerrno>
+#include <clocale>
+#include <cstring>
 
-#include <TCP/config.hpp>
 #include "Server.hpp"
+#include <TCP/config.hpp>
 
 Server::Server() {
     //Create socket
@@ -22,11 +25,12 @@ Server::Server() {
 
     //Listen
     listen(socket_desc , 3);
+    std::cout << "Server je pokrenut" << std::endl;
 }
 
 Server::~Server() {
     if (close(socket_desc) < 0) {
-        perror("Error closing socket");
+        std::cerr << "Error closing socket" << std::endl;
     }
 }
 
@@ -37,9 +41,12 @@ int Server::waitForConnection() {
 
     int client_sock = accept(socket_desc, (sockaddr *)&client, &addr_len);
     if (client_sock < 0) {
-        perror("accept failed");
+        std::cerr << "Accept failed" << std::endl;
     } else {
-        puts("Connection accepted");
+        char *client_ip = inet_ntoa(client.sin_addr); // Convert IP to string
+        uint16_t client_port = ntohs(client.sin_port); // Convert port to host byte order
+
+        std::cout << "Connection accepted from " << client_ip << ":" << client_port << std::endl;
     }
 
     return client_sock;
@@ -50,21 +57,22 @@ int Server::receive(int client_sock, void *buf, const size_t size) {
     int read_size = recv(client_sock , buf , size , 0);
 
     if(read_size == 0) {
-        puts("Client disconnected");
+        throw std::runtime_error("Client disconnected");
     } else if(read_size == -1) {
-        perror("recv failed");
+        throw std::runtime_error(std::strerror(errno));
     } else {
-        printf("Received: %d bytes!\n", read_size);
+        std::cout << "Received: " << read_size << " bytes" << std::endl;
     }
 
     return read_size;
 }
 
 int Server::send(int client_sock, const void *buf, const size_t size) {
-    const size_t write_size = ::send(client_sock , buf , size, 0);
+    //Send a message to client
+    const int write_size = ::send(client_sock , buf , size, 0);
 
-    if (write_size != size) {
-        puts("Send failed");
+    if (write_size == -1) {
+        throw std::runtime_error(std::strerror(errno));
     }
 
     return write_size;
