@@ -25,7 +25,7 @@ Server::Server() {
 
     //Listen
     listen(socket_desc , 3);
-    std::cout << "Server je pokrenut" << std::endl;
+    std::cout << "Server has started" << std::endl;
 }
 
 Server::~Server() {
@@ -41,13 +41,12 @@ int Server::waitForConnection() {
 
     int client_sock = accept(socket_desc, (sockaddr *)&client, &addr_len);
     if (client_sock < 0) {
-        std::cerr << "Accept failed" << std::endl;
-    } else {
-        char *client_ip = inet_ntoa(client.sin_addr); // Convert IP to string
-        uint16_t client_port = ntohs(client.sin_port); // Convert port to host byte order
-
-        std::cout << "Connection accepted from " << client_ip << ":" << client_port << std::endl;
+        throw std::runtime_error("Accept failed");
     }
+
+    char *client_ip = inet_ntoa(client.sin_addr); // Convert IP to string
+    uint16_t client_port = ntohs(client.sin_port); // Convert port to host byte order
+    std::cout << "Connection accepted from " << client_ip << ":" << client_port << std::endl;
 
     return client_sock;
 }
