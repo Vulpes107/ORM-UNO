@@ -33,11 +33,11 @@ bool Client::connectToServer() {
 }
 
 int Client::receive(void *buf, const size_t size) {
-    //Receive a message from client
+    //Receive a message from server
     int read_size = recv(sock_fd , buf , size , 0);
 
     if(read_size == 0) {
-        throw std::runtime_error("Client disconnected");
+        throw std::runtime_error("Server disconnected");
     } else if(read_size == -1) {
         throw std::runtime_error(std::strerror(errno));
     } else {
@@ -48,7 +48,7 @@ int Client::receive(void *buf, const size_t size) {
 }
 
 int Client::send(const void *buf, const size_t size) {
-    //Send a message to client
+    //Send a message to server
     const int write_size = ::send(sock_fd , buf , size, 0);
 
     if (write_size == -1) {
