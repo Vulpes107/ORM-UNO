@@ -1,4 +1,7 @@
-#include<arpa/inet.h> //inet_addr
+#ifndef SERVER_HPP
+#define SERVER_HPP
+
+#include <arpa/inet.h> //inet_addr
 
 class Server {
 private:
@@ -13,3 +16,5 @@ public:
     int receive(int client_sock, void *client_message, const size_t size);
     int send(int client_sock, const void *buf, const size_t size);
 };
+
+#endif
