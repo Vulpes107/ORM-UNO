@@ -1,6 +1,9 @@
 #include "Card.hpp"
 #include <stdexcept>
 #include <sstream>
+#include <optional>
+#include <unordered_map>
+#include <algorithm>
 
 // Constructor
 Card::Card(Color cardColor, Type cardType, int cardNumber)
@@ -89,4 +92,47 @@ std::string Card::toString() const {
     }
 
     return oss.str();
+}
+
+Card Card::parseCardData(std::vector<std::string> tokens) {
+    // Extract card details (type and color)
+    std::optional<Color> cardColor;
+    std::optional<Type> cardType;
+    std::optional<int> cardNumber;
+
+    static const std::unordered_map<std::string, Color> colorMap = {
+        {"red", Color::RED}, {"green", Color::GREEN}, {"blue", Color::BLUE}, {"yellow", Color::YELLOW}};
+    static const std::unordered_map<std::string, Type> typeMap = {
+        {"number", Type::NUMBER},   {"skip", Type::SKIP}, {"reverse", Type::REVERSE},
+        {"drawtwo", Type::DRAW_TWO}, {"wild", Type::WILD}, {"wilddrawfour", Type::WILD_DRAW_FOUR}};
+
+    for (const auto& word : tokens) {
+        // Check for color
+        if (colorMap.count(word)) {
+            cardColor = colorMap.at(word);
+        }
+        // Check for type
+        if (typeMap.count(word)) {
+            cardType = typeMap.at(word);
+        }
+        // Check for number
+        if (std::all_of(word.begin(), word.end(), ::isdigit)) {
+            cardNumber = std::stoi(word);
+            cardType = Type::NUMBER; // Ensure the type is set to NUMBER
+        }
+    }
+
+    // Validate that all required fields are set
+    if (!cardColor) {
+        throw std::invalid_argument("Card color is missing or invalid.");
+    }
+    if (!cardType) {
+        throw std::invalid_argument("Card type is missing or invalid.");
+    }
+    if (cardType == Type::NUMBER && !cardNumber) {
+        throw std::invalid_argument("Card number is missing for a number card.");
+    }
+
+    // If valid, return the card
+    return Card(cardColor.value(), cardType.value(), cardNumber.value_or(-1));
 }
