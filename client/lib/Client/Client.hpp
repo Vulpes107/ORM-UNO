@@ -2,6 +2,8 @@
 #define CLIENT_HPP
 
 #include <arpa/inet.h>  //inet_addr
+#include <Messages/MessageType.hpp>
+#include <Card/Card.hpp>
 
 class Client {
 private:
@@ -13,8 +15,15 @@ public:
     ~Client();
 
     bool connectToServer();
-    int receive(void *client_message, const size_t size);
+    int receive(void *buf, const size_t size);
+    int receive(MessageType &msgType);
+    int receive(std::string &msg);
+    int receive(Card &card);
+
     int send(const void *buf, const size_t size);
+    int send(const MessageType &msgType);
+    int send(const std::string &msg);
+    int send(const Card &card);
 };
 
 #endif // CLIENT_HPP

@@ -3,9 +3,10 @@
 
 #include <string>
 #include <vector>
+#include <cstdint>
 
 // Enumeration for UNO card colors
-enum class Color {
+enum class Color : uint8_t {
     RED,
     GREEN,
     BLUE,
@@ -14,7 +15,7 @@ enum class Color {
 };
 
 // Enumeration for UNO card types
-enum class Type {
+enum class Type : uint8_t {
     NUMBER,
     SKIP,
     REVERSE,
