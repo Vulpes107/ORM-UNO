@@ -9,12 +9,11 @@ int main() {
     char client_username[256];
 
     try {
-      int client_sock = server.waitForConnection();
-      int received_size = server.receive(client_sock, client_username, 256);
-      server.send(client_sock, client_username, received_size);
-      cout<<client_username<<endl;
+        int client_sock = server.waitForConnection();
+        int received_size = server.receive(client_sock, client_username, 256);
+        server.send(client_sock, client_username, received_size);
+        cout<<client_username<<endl;
     } catch(const std::exception& e) {
-      cerr << e.what() << endl;
+        cerr << e.what() << endl;
     }
-
 }
