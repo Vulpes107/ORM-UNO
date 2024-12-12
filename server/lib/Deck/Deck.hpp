@@ -1,7 +1,7 @@
 #ifndef DECK_HPP
 #define DECK_HPP
 
-#include "Card.hpp"
+#include <Card/Card.hpp>
 #include <stack>
 #include <stdexcept>
 
