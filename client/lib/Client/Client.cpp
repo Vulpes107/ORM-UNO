@@ -22,7 +22,7 @@ Client::Client() {
 }
 
 Client::~Client() {
-    if (close(sock_fd) < 0) {
+    if (!disconnect()) {
         std::cerr << "Error closing socket" << std::endl;
     }
 }
@@ -35,6 +35,10 @@ bool Client::connectToServer() {
         std::cout << "Connected to " << ip << ":" << port << std::endl;
     }
     return return_value;
+}
+
+bool Client::disconnect() {
+    return close(sock_fd) >= 0;
 }
 
 int Client::receive(void *buf, const size_t size) {
