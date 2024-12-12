@@ -4,7 +4,6 @@
 #include <cstdint>
 
 enum class MessageType : uint8_t {
-    REGISTER,
     ECHO_MSG,
     TURN_TOKEN,
     HAND_DECK,

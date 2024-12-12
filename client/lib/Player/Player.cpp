@@ -5,7 +5,6 @@
 #include <iostream>
 
 Player::Player(const std::string username, Client &client) : username(username), client(client) {
-    client.send(MessageType::REGISTER);
     client.send(username);
 }
 
