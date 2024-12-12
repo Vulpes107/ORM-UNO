@@ -27,14 +27,14 @@ Client::~Client() {
     }
 }
 
-bool Client::connectToServer() {
-    bool return_value = connect(sock_fd, (struct sockaddr*)&server, sizeof(server)) != -1;
-    if (return_value) {
+void Client::connectToServer() {
+    if (connect(sock_fd, (struct sockaddr*)&server, sizeof(server)) != -1) {
         char *ip = inet_ntoa(server.sin_addr);
         uint16_t port = ntohs(server.sin_port);
         std::cout << "Connected to " << ip << ":" << port << std::endl;
+    } else {
+        throw std::runtime_error("Unable to connect to server");
     }
-    return return_value;
 }
 
 int Client::receive(void *buf, const size_t size) {
