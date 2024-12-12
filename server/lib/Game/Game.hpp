@@ -5,8 +5,6 @@
 #include <Player/Player.hpp>
 #include <Deck/Deck.hpp>
 
-#define NUMBER_OF_CARDS 7
-
 enum class Direction { CW, CCW };
 
 class Game {

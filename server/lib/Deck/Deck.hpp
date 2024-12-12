@@ -5,6 +5,8 @@
 #include <stack>
 #include <stdexcept>
 
+#define NUMBER_OF_CARDS_TO_DEAL 7
+
 class Deck {
 private:
     std::stack<Card> cards; // Represents the deck of cards

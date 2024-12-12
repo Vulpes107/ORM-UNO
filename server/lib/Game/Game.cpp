@@ -10,7 +10,7 @@ void Game::dealCards() {
     for(auto &player : players) {
         std::vector<Card> hand;
 
-        for(int i = 0; i < NUMBER_OF_CARDS; i++) {
+        for(int i = 0; i < NUMBER_OF_CARDS_TO_DEAL; i++) {
             hand.push_back(drawPile.takeTopCard());
         }
  
@@ -37,40 +37,53 @@ Player &Game::getNextPlayer() {
 }
 
 void Game::playNext() {
-    /// TODO: sve
-
     // if(drawPile.isEmpty()) {    // greska, drawPile < 5?
     //     Deck::regenerateDrawPile(drawPile, discardPile);
     // }
 
     Player &player = getNextPlayer();
+    server.send(player.getSocket(), MessageType::TURN_TOKEN);   // tell him that it is his turn
+    bool turnToken = false;
 
-    /*
-    send to client what is requested from user:
-    if he needs to draw 4 or 2 just tell him, draw and skip
-    if he needs to place a card prompt him to place or draw
-    */
-    while(true) {
-        try {
-            ParsedCommand command = player.prompt();
+    while (!turnToken) {
+        MessageType type;
+        server.receive(player.getSocket(), type);
 
-            if(command.type == CommandType::DRAW) {
-                // draw a card from drawPile and send it to client
-                // Card card = drawPile.takeTopCard();
-            } else if(command.type == CommandType::PLACE) {
-                // place a card sent from client
-                // end his turn (return false)
+        switch (type) {
+        case MessageType::TOP_CARD: {
+            server.send(player.getSocket(), discardPile.getTopCard());
+            break;
+        }
 
-                // Card card = command.card.value();
-                // discardPile.placeCard(card);
-            } else {
-                // client skipped, end his turn
+        case MessageType::PLACE: {
+            Card card;
+            server.receive(player.getSocket(), card);
+            discardPile.placeCard(card);
+            break;
+        }
+
+        case MessageType::DRAW: {
+            int numberToDraw;
+            server.receive(player.getSocket(), numberToDraw);
+            for(int i = 0; i < numberToDraw; i++) {
+                server.send(player.getSocket(), drawPile.takeTopCard());
             }
-            
-        } catch (const std::invalid_argument& e) {
-            std::cerr << "Error parsing input: " << e.what() << std::endl;
+            break;
+        }
+
+        case MessageType::SKIP: {
+            break;
+        }
+
+        case MessageType::TURN_TOKEN: {
+            turnToken = true;
+            break;
+        }
+
+        default: {
+            std::cerr<<"Unknow packet order";
+            break;
+        }
         }
     }
-
-    
 }
