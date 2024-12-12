@@ -20,11 +20,13 @@ public:
     int receive(int client_sock, MessageType &msgType);
     int receive(int client_sock, std::string &msg);
     int receive(int client_sock, Card &card);
+    int receive(int client_sock, int &num);
 
     int send(int client_sock, const void *buf, size_t size);
     int send(int client_sock, const MessageType &msgType);
     int send(int client_sock, const std::string &msg);
     int send(int client_sock, const Card &card);
+    int send(int client_sock, const int &num);
 };
 
 #endif

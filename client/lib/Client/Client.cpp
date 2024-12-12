@@ -66,27 +66,32 @@ int Client::receive(MessageType &msgType) {
 
 // Receive overload for std::string
 int Client::receive(std::string &msg) {
-    uint32_t length;
-    receive(&length, sizeof(length)); // First receive the length of the string
-    length = ntohl(length);          // Convert from network to host byte order
+    int length;
+    receive(length);
 
     std::vector<char> buffer(length);
-    receive(buffer.data(), length); // Receive the string data
+    receive(buffer.data(), length); // Receive string data
     msg.assign(buffer.begin(), buffer.end());
-    return static_cast<int>(length);
+    return length;
 }
 
 // Receive overload for Card
 int Client::receive(Card &card) {
     std::array<uint8_t, 3> data;
-    receive(data.data(), data.size());
+    int size = receive(data.data(), data.size());
 
     Color color = static_cast<Color>(data[0]);
     Type type = static_cast<Type>(data[1]);
     int number = static_cast<int>(data[2]);
 
     card = Card(color, type, number);
-    return static_cast<int>(data.size());
+    return size;
+}
+
+int Client::receive(int &num) {
+    int size = receive(&num, sizeof(num)); // Receive num
+    num = ntohl(num);          // Convert to host byte order
+    return size;
 }
 
 int Client::send(const void *buf, const size_t size) {
@@ -108,9 +113,8 @@ int Client::send(const MessageType &msgType) {
 
 // Send overload for std::string
 int Client::send(const std::string &msg) {
-    uint32_t length = htonl(static_cast<uint32_t>(msg.size())); // Convert to network byte order
-    send(&length, sizeof(length));                             // Send the length first
-    return send(msg.data(), msg.size());                       // Send the actual string data
+    send(msg.size());                               // Send length
+    return send(msg.data(), msg.size());            // Send string data
 }
 
 // Send overload for Card
@@ -121,4 +125,9 @@ int Client::send(const Card &card) {
 
     std::array<uint8_t, 3> data = {color, type, number};
     return send(data.data(), data.size());
+}
+
+int Client::send(const int &num) {
+    int net_num = htonl(num); // Convert to network byte order
+    return send(&net_num, sizeof(net_num));
 }

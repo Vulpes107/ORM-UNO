@@ -21,11 +21,13 @@ public:
     int receive(MessageType &msgType);
     int receive(std::string &msg);
     int receive(Card &card);
+    int receive(int &num);
 
     int send(const void *buf, const size_t size);
     int send(const MessageType &msgType);
     int send(const std::string &msg);
     int send(const Card &card);
+    int send(const int &num);
 };
 
 #endif // CLIENT_HPP

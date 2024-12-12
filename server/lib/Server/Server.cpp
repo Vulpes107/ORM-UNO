@@ -77,27 +77,32 @@ int Server::receive(int client_sock, MessageType &msgType) {
 
 // Receive overload for std::string
 int Server::receive(int client_sock, std::string &msg) {
-    uint32_t length;
-    receive(client_sock, &length, sizeof(length)); // Receive length
-    length = ntohl(length);                        // Convert to host byte order
+    int length;
+    receive(client_sock, length);
 
     std::vector<char> buffer(length);
     receive(client_sock, buffer.data(), length);  // Receive string data
     msg.assign(buffer.begin(), buffer.end());
-    return static_cast<int>(length);
+    return length;
 }
 
 // Receive overload for Card
 int Server::receive(int client_sock, Card &card) {
     std::array<uint8_t, 3> data;
-    receive(client_sock, data.data(), data.size());
+    int size = receive(client_sock, data.data(), data.size());
 
     Color color = static_cast<Color>(data[0]);
     Type type = static_cast<Type>(data[1]);
     int number = static_cast<int>(data[2]);
 
     card = Card(color, type, number);
-    return static_cast<int>(data.size());
+    return size;
+}
+
+int Server::receive(int client_sock, int &num) {
+    int size = receive(client_sock, &num, sizeof(num)); // Receive num
+    num = ntohl(num);                        // Convert to host byte order
+    return size;
 }
 
 int Server::send(int client_sock, const void *buf, const size_t size) {
@@ -119,8 +124,7 @@ int Server::send(int client_sock, const MessageType &msgType) {
 
 // Send overload for std::string
 int Server::send(int client_sock, const std::string &msg) {
-    uint32_t length = htonl(static_cast<uint32_t>(msg.size())); // Convert to network byte order
-    send(client_sock, &length, sizeof(length));                // Send length
+    send(client_sock, msg.size());                             // Send length
     return send(client_sock, msg.data(), msg.size());          // Send string data
 }
 
@@ -132,4 +136,9 @@ int Server::send(int client_sock, const Card &card) {
 
     std::array<uint8_t, 3> data = {color, type, number};
     return send(client_sock, data.data(), data.size());
+}
+
+int Server::send(int client_sock, const int &num) {
+    int net_num = htonl(num); // Convert to network byte order
+    return send(client_sock, &net_num, sizeof(net_num));
 }
