@@ -14,7 +14,7 @@ public:
     Client();
     ~Client();
 
-    bool connectToServer();
+    void connectToServer();
     bool disconnect();
 
     int receive(void *buf, const size_t size);
