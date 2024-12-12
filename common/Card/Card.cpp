@@ -16,6 +16,8 @@ Card::Card(Color cardColor, Type cardType, int cardNumber)
     }
 }
 
+Card::Card() : color(Color::WILD), type(Type::WILD), number(-1) {}
+
 // Getters
 Color Card::getColor() const {
     return color;

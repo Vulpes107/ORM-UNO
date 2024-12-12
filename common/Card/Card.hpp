@@ -33,6 +33,7 @@ private:
 public:
     // Constructor
     Card(Color cardColor, Type cardType, int cardNumber = -1);
+    Card();
 
     // Getters
     Color getColor() const;
