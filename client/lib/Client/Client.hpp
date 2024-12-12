@@ -15,6 +15,8 @@ public:
     ~Client();
 
     void connectToServer();
+    bool disconnect();
+
     int receive(void *buf, const size_t size);
     int receive(MessageType &msgType);
     int receive(std::string &msg);
