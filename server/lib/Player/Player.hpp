@@ -6,16 +6,16 @@
 
 #include <Card/Card.hpp>
 #include <Deck/Deck.hpp>
+#include <Server.hpp>
 
 class Player {
 private:
-    std::string username;
+    Server &server;
     int socket;
-    std::vector<Card> handDeck;
-
+    std::string username;
 
 public:
-    Player(int socket, const std::string username);
+    Player(Server &server, int socket, const std::string username);
 
     int getSocket() const;
     std::string getName() const;

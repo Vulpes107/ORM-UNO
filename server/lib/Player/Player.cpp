@@ -1,7 +1,7 @@
 #include "Player.hpp"
 
 
-Player::Player(int socket, const std::string username) : socket(socket), username(username) {}
+Player::Player(Server &server, int socket, const std::string username) : server(server), socket(socket), username(username) {}
 
 int Player::getSocket() const {
     return socket;
@@ -12,7 +12,8 @@ std::string Player::getName() const {
 }
 
 void Player::setHandDeck(std::vector<Card> handDeck) {
-    // this->handDeck = handDeck;
-    // send handDeck to client, no need to keep it
+    server.send(socket, MessageType::HAND_DECK);
+    for(int i = 0; i < NUMBER_OF_CARDS_TO_DEAL; i++) {
+        server.send(socket, handDeck[i]);
+    }
 }
-
