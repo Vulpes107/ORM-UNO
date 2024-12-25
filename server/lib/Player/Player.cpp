@@ -12,7 +12,6 @@ std::string Player::getName() const {
 }
 
 void Player::setHandDeck(std::vector<Card> handDeck) {
-    server.send(socket, MessageType::HAND_DECK);
     for(int i = 0; i < NUMBER_OF_CARDS_TO_DEAL; i++) {
         server.send(socket, handDeck[i]);
     }
