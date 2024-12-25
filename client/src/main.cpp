@@ -17,6 +17,14 @@ int main() {
 
         Player player(username, client);
 
+        try {
+            player.setHandDeck();
+            std::cout<<"Received deck;"<<endl;
+        } catch(exception &e) {
+            std::cerr<<"Error: "<<e.what()<<std::endl;
+            return 0;
+        }
+
         while(true) {
             try {
                 auto rez = player.prompt();
@@ -29,23 +37,6 @@ int main() {
         std::cerr<<"Server error: "<<e.what()<<std::endl;
     }
     
-
-    // if (!client.connectToServer()) {
-    //     cerr << "Connect failed" << endl;
-    //     return 1;
-    // }
-
-    // cout << "Input username: " << endl;
-    // cin >> user_name;
-
-    // char buf[256];
-    // try {
-    //     client.send(user_name.c_str(), user_name.size());
-    //     client.receive(buf, 256);
-    //     cout << buf << endl;   
-    // } catch(const std::exception& e) {
-    //     cerr << e.what() << endl;
-    // }
    
     return 0;
 }

@@ -6,6 +6,7 @@
 #include <optional>
 
 #include <Card/Card.hpp>
+#include <../server/lib/Deck/Deck.hpp>
 #include <Client.hpp>
 
 struct ParsedCommand {
@@ -27,6 +28,8 @@ public:
     // ~Player();
 
     ParsedCommand prompt();
+
+    void setHandDeck();
 };
 
 #endif // PLAYER_HPP
