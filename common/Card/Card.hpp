@@ -28,7 +28,7 @@ class Card {
 private:
     Color color;
     Type type;
-    int number; // Used only if type == NUMBER
+    int8_t number; // Used only if type == NUMBER
 
 public:
     // Constructor
