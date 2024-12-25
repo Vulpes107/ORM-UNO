@@ -7,7 +7,6 @@
 #include <cerrno>
 #include <clocale>
 #include <cstring>
-#include <array>
 
 #include <TCP/config.hpp>
 #include "Client.hpp"
@@ -58,10 +57,7 @@ int Client::receive(void *buf, const size_t size) {
 
 // Receive overload for MessageType
 int Client::receive(MessageType &msgType) {
-    uint8_t typeRaw;
-    int bytesRead = receive(&typeRaw, sizeof(typeRaw));
-    msgType = static_cast<MessageType>(typeRaw);
-    return bytesRead;
+    return receive(&msgType, sizeof(MessageType));
 }
 
 // Receive overload for std::string
@@ -77,15 +73,7 @@ int Client::receive(std::string &msg) {
 
 // Receive overload for Card
 int Client::receive(Card &card) {
-    std::array<uint8_t, 3> data;
-    int size = receive(data.data(), data.size());
-
-    Color color = static_cast<Color>(data[0]);
-    Type type = static_cast<Type>(data[1]);
-    int number = static_cast<int>(data[2]);
-
-    card = Card(color, type, number);
-    return size;
+    return receive(&card, sizeof(Card));
 }
 
 int Client::receive(int &num) {
@@ -107,8 +95,7 @@ int Client::send(const void *buf, const size_t size) {
 
 // Send overload for MessageType
 int Client::send(const MessageType &msgType) {
-    uint8_t typeRaw = static_cast<uint8_t>(msgType);
-    return send(&typeRaw, sizeof(typeRaw));
+    return send(&msgType, sizeof(MessageType));
 }
 
 // Send overload for std::string
@@ -119,12 +106,7 @@ int Client::send(const std::string &msg) {
 
 // Send overload for Card
 int Client::send(const Card &card) {
-    uint8_t color = static_cast<uint8_t>(card.getColor());
-    uint8_t type = static_cast<uint8_t>(card.getType());
-    uint8_t number = static_cast<uint8_t>(card.getNumber());
-
-    std::array<uint8_t, 3> data = {color, type, number};
-    return send(data.data(), data.size());
+    return send(&card, sizeof(Card));
 }
 
 int Client::send(const int &num) {
