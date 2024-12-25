@@ -53,10 +53,17 @@ ParsedCommand Player::parseInput(const std::string& input) {
 }
 
 ParsedCommand Player::prompt() {
-    /// TODO: uraditi tcp request prompt i receive i staviti dobijeno u string
     std::string input;
-    std::cout<<"unesi: ";
+    std::cout<<"Input: ";
     std::getline(std::cin, input);
 
     return parseInput(input);
+}
+
+void Player::setHandDeck() {
+    Card card;
+    for(int i = 0; i < NUMBER_OF_CARDS_TO_DEAL; i++) {
+        client.receive(card);
+        handDeck.push_back(card);
+    }
 }
