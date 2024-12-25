@@ -69,10 +69,7 @@ int Server::receive(int client_sock, void *buf, const size_t size) {
 
 // Receive overload for MessageType
 int Server::receive(int client_sock, MessageType &msgType) {
-    uint8_t typeRaw;
-    int bytesRead = receive(client_sock, &typeRaw, sizeof(typeRaw));
-    msgType = static_cast<MessageType>(typeRaw);
-    return bytesRead;
+    return receive(client_sock, &msgType, sizeof(MessageType));
 }
 
 // Receive overload for std::string
@@ -88,15 +85,7 @@ int Server::receive(int client_sock, std::string &msg) {
 
 // Receive overload for Card
 int Server::receive(int client_sock, Card &card) {
-    std::array<uint8_t, 3> data;
-    int size = receive(client_sock, data.data(), data.size());
-
-    Color color = static_cast<Color>(data[0]);
-    Type type = static_cast<Type>(data[1]);
-    int number = static_cast<int>(data[2]);
-
-    card = Card(color, type, number);
-    return size;
+    return receive(client_sock, &card, sizeof(Card));
 }
 
 int Server::receive(int client_sock, int &num) {
@@ -118,8 +107,7 @@ int Server::send(int client_sock, const void *buf, const size_t size) {
 
 // Send overload for MessageType
 int Server::send(int client_sock, const MessageType &msgType) {
-    uint8_t typeRaw = static_cast<uint8_t>(msgType);
-    return send(client_sock, &typeRaw, sizeof(typeRaw));
+    return send(client_sock, &msgType, sizeof(MessageType));
 }
 
 // Send overload for std::string
@@ -130,12 +118,7 @@ int Server::send(int client_sock, const std::string &msg) {
 
 // Send overload for Card
 int Server::send(int client_sock, const Card &card) {
-    uint8_t color = static_cast<uint8_t>(card.getColor());
-    uint8_t type = static_cast<uint8_t>(card.getType());
-    uint8_t number = static_cast<uint8_t>(card.getNumber());
-
-    std::array<uint8_t, 3> data = {color, type, number};
-    return send(client_sock, data.data(), data.size());
+    return send(client_sock, &card, sizeof(Card));
 }
 
 int Server::send(int client_sock, const int &num) {
