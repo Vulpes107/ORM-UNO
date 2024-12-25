@@ -43,7 +43,17 @@ bool Card::canBePlaced(Card &topCard) {
     if (type == Type::WILD || type == Type::WILD_DRAW_FOUR) {
         return true;
     }
-    
+
+    // Check if both cards have the 'Draw_two' type
+    if (type == Type::DRAW_TWO && topCard.getType() == Type::DRAW_TWO) {
+        return true;
+    }
+
+    // Check if both cards have the 'Reverse' type
+    if (type == Type::REVERSE && topCard.getType() == Type::REVERSE) {
+        return true;
+    }
+
     // Check if the colors match 
     if (color == topCard.color) {
         return true;
