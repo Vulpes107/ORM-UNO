@@ -84,7 +84,7 @@ std::string Card::toString() const {
     // Add type and number
     switch (type) {
         case Type::NUMBER:
-            oss << "Number " << number;
+            oss << "Number " << this->getNumber();
             break;
         case Type::SKIP:
             oss << "Skip";
