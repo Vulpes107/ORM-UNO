@@ -22,14 +22,19 @@ private:
     Client &client;
 
     ParsedCommand parseInput(const std::string& input);
+    ParsedCommand prompt();
+    bool prompt(ParsedCommand &comand);
+    void topCardComand(Card &);
+    bool findCard(Card &card, Card &topCard);
+    void addCards(int num);
 
 public:
     Player(const std::string username, Client &client);
     // ~Player();
 
-    ParsedCommand prompt();
-
     void setHandDeck();
+    void printHandDeck();
+    void nextMove();
 };
 
 #endif // PLAYER_HPP

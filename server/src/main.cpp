@@ -19,10 +19,12 @@ int main() {
 
     Game game(server, players);
     game.placeTopCard();
-    try {
-        game.dealCards();
-        game.playNext();
-    } catch (std::exception &e) {
-        std::cerr<<"Server error: "<<e.what()<<std::endl;
+    game.dealCards();
+    while (true) {
+        try {
+            game.playNext();
+        } catch (std::exception &e) {
+            std::cerr<<"Server error: "<<e.what()<<std::endl;
+        }
     }
 }

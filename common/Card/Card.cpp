@@ -128,13 +128,15 @@ Card Card::parseCardData(std::vector<std::string> tokens) {
             cardType = typeMap.at(word);
         }
         // Check for number
-        if (std::all_of(word.begin(), word.end(), ::isdigit)) {
+        if (cardType == Type::NUMBER && std::all_of(word.begin(), word.end(), ::isdigit)) {
             cardNumber = std::stoi(word);
-            cardType = Type::NUMBER; // Ensure the type is set to NUMBER
         }
     }
 
     // Validate that all required fields are set
+    if ((cardType == Type::WILD || cardType == Type::WILD_DRAW_FOUR) && !cardColor) {
+        throw std::invalid_argument("Color for the next card is missing or invalid.");
+    }
     if (!cardColor) {
         throw std::invalid_argument("Card color is missing or invalid.");
     }
