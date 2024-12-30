@@ -18,10 +18,13 @@ private:
     Direction direction;
 
     Player &getNextPlayer();
+    Card drawCard();
 
 public:
     Game(Server &server, Players players);
     
+    void broadcastTopCard();
+    void topCardCommand();
     void placeTopCard();
     void dealCards();
     void playNext();

@@ -2,14 +2,27 @@
 #include <string.h>
 #include <Client.hpp>
 #include <Player.hpp>
+#include <unordered_map>
 #include <csignal>
+#include <TerminalUI/TerminalUI.hpp>
+#include <thread>
+
 
 using namespace std;
+using namespace UI;
+
 
 int main() {
     string username;
-    std::cout<<"Unesi username: ";
-    std::getline(std::cin, username);
+    while(true) {
+        cout<<"Input username: ";
+        getline(cin, username);
+        if(username.empty()) {
+            cout<<"String is empty."<<endl;
+        } else {
+            break;
+        }
+    }
 
     try {
         Client client;
@@ -17,24 +30,15 @@ int main() {
 
         Player player(username, client);
 
-        try {
-            player.setHandDeck();
-            std::cout<<"Received deck;"<<endl;
-        } catch(exception &e) {
-            std::cerr<<"Error: "<<e.what()<<std::endl;
-            return 0;
-        }
-
+        player.setHandDeck();
+        player.printHandDeck();
+        
         while(true) {
-            try {
-                auto rez = player.prompt();
-                std::cout<<static_cast<int>(rez.type)<<" | "<<rez.card->toString()<<" | "<<rez.saidUno<<std::endl;
-            } catch(exception &e) {
-                std::cerr<<"Input error: "<<e.what()<<std::endl;
-            }
+            player.receiveServerCommand();
+            // player.printHandDeck();
         }
     } catch(exception &e) {
-        std::cerr<<"Server error: "<<e.what()<<std::endl;
+        cerr<<"Server error: "<<e.what()<<endl;
     }
     
    

@@ -49,7 +49,7 @@ int Client::receive(void *buf, const size_t size) {
     } else if(read_size == -1) {
         throw std::runtime_error(std::strerror(errno));
     } else {
-        std::cout << "Received: " << read_size << " bytes" << std::endl;
+        // std::cout << "Received: " << read_size << " bytes" << std::endl;
     }
 
     return read_size;
