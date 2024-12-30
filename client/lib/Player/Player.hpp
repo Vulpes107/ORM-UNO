@@ -9,8 +9,16 @@
 #include <../server/lib/Deck/Deck.hpp>
 #include <Client.hpp>
 
+enum CommandType {
+    PLACE,
+    SKIP,
+    TOP,
+    DRAW,
+    DECK,
+};
+
 struct ParsedCommand {
-    MessageType type;
+    CommandType type;
     std::optional<Card> card; // Only for PLACE commands
     bool saidUno = false;     // True if "UNO" was detected
 };
@@ -20,13 +28,13 @@ private:
     std::string username;
     std::vector<Card> handDeck;
     Client &client;
+    Card topCard;
 
     ParsedCommand parseInput(const std::string& input);
     ParsedCommand prompt();
-    bool prompt(ParsedCommand &comand);
-    void topCardComand(Card &);
-    bool findCard(Card &card, Card &topCard);
+    bool findCard(Card &card);
     void addCards(int num);
+    void nextMove();
 
 public:
     Player(const std::string username, Client &client);
@@ -34,7 +42,7 @@ public:
 
     void setHandDeck();
     void printHandDeck();
-    void nextMove();
+    void receiveServerCommand();
 };
 
 #endif // PLAYER_HPP
