@@ -21,7 +21,15 @@ std::vector<Card> Player::getHandDeck() const {
 }
 
 void Player::setHandDeck(std::vector<Card> handDeck) {
+    this->handDeck = handDeck;
+    server.send(getSocket(), MessageType::HAND_DECK);
     for (auto it = handDeck.begin(); it != handDeck.end(); it++) {
+        server.send(socket, *it);
+    }
+}
+
+void Player::addCards(std::vector<Card> cards) {
+    for (auto it = cards.begin(); it != cards.end(); it++) {
         this->handDeck.push_back(*it);
         server.send(socket, *it);
     }

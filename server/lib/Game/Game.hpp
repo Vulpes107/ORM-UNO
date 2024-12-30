@@ -16,14 +16,15 @@ private:
     Deck discardPile;
     Deck drawPile;
     Direction direction;
-    bool skipPlayer;
 
     Player &getNextPlayer();
-    void topCardComand(Player &player);
+    Card drawCard();
 
 public:
     Game(Server &server, Players players);
     
+    void broadcastTopCard();
+    void topCardCommand();
     void placeTopCard();
     void dealCards();
     void playNext();

@@ -22,6 +22,7 @@ public:
     std::vector<Card> getHandDeck() const;
     
     void setHandDeck(std::vector<Card> handDeck);
+    void addCards(std::vector<Card> cards);
     bool findCard(Card card);
     void printHandDeck();
 };
