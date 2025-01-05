@@ -21,13 +21,13 @@ int main() {
     game.placeTopCard();
     game.dealCards();
     game.broadcastTopCard();
-    while (true) {
-        try {
+    try {
+        while (true) {
             game.playNext();
             game.broadcastTopCard();
             game.topCardCommand();
-        } catch (std::exception &e) {
-            std::cerr<<"Server error: "<<e.what()<<std::endl;
         }
+    } catch (std::exception &e) {
+        std::cerr<<"Server error: "<<e.what()<<std::endl;
     }
 }
