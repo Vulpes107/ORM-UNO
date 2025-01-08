@@ -87,3 +87,7 @@ void Player::printHandDeck() {
         }
     }
 }
+
+bool Player::endGame() {
+    return handDeck.empty();
+}

@@ -12,6 +12,7 @@ private:
     Server &server;
     Players players;
     unsigned currentPlayer;
+    const Card *prevTopCard;
 
     Deck discardPile;
     Deck drawPile;
@@ -28,6 +29,9 @@ public:
     void placeTopCard();
     void dealCards();
     void playNext();
+    bool endGame();
+
+    ~Game();
 };
 
 #endif

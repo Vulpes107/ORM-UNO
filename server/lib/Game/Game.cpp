@@ -6,6 +6,11 @@ Game::Game(Server &server, Players players) : server(server), players(players), 
     currentPlayer = rand() % players.size();
     discardPile.resetEmpty();
     drawPile.resetFull();
+    prevTopCard = nullptr;
+}
+
+Game::~Game() {
+    prevTopCard = nullptr;
 }
 
 void Game::dealCards() {
@@ -26,6 +31,8 @@ void Game::placeTopCard() {
     }
 
     discardPile.placeCard(drawCard());
+    const Card &topCard = discardPile.getTopCard();
+    prevTopCard = &topCard;
 }
 
 Player &Game::getNextPlayer() {
@@ -48,48 +55,51 @@ void Game::broadcastTopCard() {
 }
 
 void Game::topCardCommand() {
-    Card topCard = discardPile.getTopCard();
+    const Card &topCard = discardPile.getTopCard();
 
-    std::vector<Card> drawnCards;
-    switch (topCard.getType()) {
-    case Type::DRAW_TWO: {
-        Player &player = getNextPlayer();
-        for (int i = 0; i < 2; i++) {
-            drawnCards.push_back(drawCard());
+    if (&topCard != prevTopCard) {   
+        prevTopCard = &topCard;
+        std::vector<Card> drawnCards;
+        switch (topCard.getType()) {
+        case Type::DRAW_TWO: {
+            Player &player = getNextPlayer();
+            for (int i = 0; i < 2; i++) {
+                drawnCards.push_back(drawCard());
+            }
+            server.send(player.getSocket(), MessageType::DRAW);
+            server.send(player.getSocket(), 2);
+            player.addCards(drawnCards);
+            break;
         }
-        server.send(player.getSocket(), MessageType::DRAW);
-        server.send(player.getSocket(), 2);
-        player.addCards(drawnCards);
-        break;
-    }
 
-    case Type::WILD_DRAW_FOUR: {
-        Player &player = getNextPlayer();
-        for (int i = 0; i < 4; i++) {
-            drawnCards.push_back(drawCard());
+        case Type::WILD_DRAW_FOUR: {
+            Player &player = getNextPlayer();
+            for (int i = 0; i < 4; i++) {
+                drawnCards.push_back(drawCard());
+            }
+            server.send(player.getSocket(), MessageType::DRAW);
+            server.send(player.getSocket(), 4);
+            player.addCards(drawnCards);
+            break;
         }
-        server.send(player.getSocket(), MessageType::DRAW);
-        server.send(player.getSocket(), 4);
-        player.addCards(drawnCards);
-        break;
-    }
 
-    case Type::REVERSE: {
-        direction = (direction == Direction::CW) ? Direction::CCW : Direction::CW;
-        if (players.size() == 2) {
-            getNextPlayer();    // reverse acts as skip in two player situation
+        case Type::REVERSE: {
+            direction = (direction == Direction::CW) ? Direction::CCW : Direction::CW;
+            if (players.size() == 2) {
+                getNextPlayer();    // reverse acts as skip in two player situation
+            }
+            break;
         }
-        break;
-    }
 
-    case Type::SKIP: {
-        getNextPlayer();
-        break;
-    }
+        case Type::SKIP: {
+            getNextPlayer();
+            break;
+        }
 
-    default: {
-        break;
-    }
+        default: {
+            break;
+        }
+        }
     }
 }
 
@@ -111,10 +121,6 @@ void Game::playNext() {
         server.receive(player.getSocket(), type);
 
         switch (type) {
-        // case MessageType::TOP_CARD: {
-        //     server.send(player.getSocket(), discardPile.getTopCard());
-        //     break;
-        // }
 
         case MessageType::PLACE: {
             Card card;
@@ -122,9 +128,6 @@ void Game::playNext() {
             if(player.findCard(card)) {
                 discardPile.placeCard(card);
             }
-            //TO DO: Ako vrati false sta da radi? -> fakticki je nemoguce vratiti false,
-            //      jer je prethodno u clijentu provjereno da postoji data karta u deku,
-            //      dakle ne treba nista?
             break;
         }
 
@@ -144,5 +147,29 @@ void Game::playNext() {
         }
         }
     }
-    // player.printHandDeck();
+}
+
+bool Game::endGame() {
+    bool endGame = false;
+    for (unsigned i = 0; i < players.size(); i++) {
+        if (players[i].endGame()) {
+            endGame = true;
+            break;
+        }
+    }
+    if (endGame) {
+        unsigned numPlayers = players.size();
+        for (unsigned i = 0; i < numPlayers; i++) {
+            if (players[i].endGame()) {
+                server.send(players[i].getSocket(), MessageType::END_GAME);
+                server.send(players[i].getSocket(), "Congratulations, you won!");   // tell him that is end of game
+            } else {
+                server.send(players[i].getSocket(), MessageType::END_GAME);
+                server.send(players[i].getSocket(), "Sorry, you lost! Better luck next time!");  // tell him that is end of game
+            }
+        }
+        return true;
+    } else {
+        return false;
+    }
 }
