@@ -6,6 +6,7 @@
 #include <unordered_set>
 
 Player::Player(const std::string username, Client &client) : username(username), client(client) {
+    endGame = false;
     client.send(username);
 }
 
@@ -107,8 +108,6 @@ bool Player::findCard(Card &card) {
         throw std::runtime_error("handDeck is empty");
     }
 
-        // std::cout<<"Deck is empty."<<std::endl;
-        // return false;
     for (it = handDeck.begin(); it != handDeck.end(); it++) {
         // Check for type
         if (it->getType() == card.getType()) {
@@ -177,6 +176,14 @@ void Player::receiveServerCommand() {
         printHandDeck();
         break;
     }
+
+    case MessageType::END_GAME: {
+        std::string info;
+        client.receive(info);
+        std::cout << "[END GAME] " << info << std::endl;
+        endGame = true;
+        break;
+    }
     
     default:
         break;
@@ -187,19 +194,25 @@ void Player::nextMove() {
     bool drawnOnce = false;
     bool turnToken = true;
 
-    // Checking the top card of the discard pile
-    std::cout<<"Top card: "<<topCard.toString()<<std::endl;
-
     while (turnToken) {
         ParsedCommand command = prompt();
         switch (command.type) {
         case CommandType::PLACE: {
             if (findCard(command.card.value())) {
-
+                if (handDeck.size() == 1 && !command.saidUno) { // player didn't say uno
+                    std::cout<<"You didn't say uno."<<std::endl;
+                    for (int i = 0; i < 2; i++) {
+                        Card card;
+                    client.send(MessageType::DRAW);
+                    client.receive(card);
+                    handDeck.push_back(card);
+                    std::cout<<"Drawn card: "<<card.toString()<<std::endl;
+                    }
+                }
                 client.send(MessageType::PLACE);
                 client.send(command.card.value());
                 turnToken = false;
-
+                
                 std::cout<<static_cast<int>(command.type)<<" | "<<command.card->toString()<<" | "<<command.saidUno<< " | "<<command.card->getNumber() <<std::endl;
             }
             break;
@@ -220,7 +233,11 @@ void Player::nextMove() {
         }
 
         case CommandType::SKIP: {
-            turnToken = false;
+            if (!drawnOnce) {
+                std::cout<<"Skipping is not allowed unless a card has been drawn first."<<std::endl;
+            } else {
+                turnToken = false;
+            }
             break;
         }
 
@@ -237,5 +254,8 @@ void Player::nextMove() {
     }
 
     client.send(MessageType::TURN_TOKEN);
-    std::cout<<"new turn"<<std::endl;
+}
+
+bool Player::getEndGame() {
+    return endGame;
 }
