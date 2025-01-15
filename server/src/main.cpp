@@ -22,7 +22,7 @@ int main() {
     game.dealCards();
     game.broadcastTopCard();
     try {
-        while (true) {
+        while (!game.endGame()) {
             game.playNext();
             game.broadcastTopCard();
             game.topCardCommand();

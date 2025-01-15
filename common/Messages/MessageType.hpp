@@ -10,6 +10,7 @@ enum class MessageType : uint8_t {
     TOP_CARD,
     PLACE,
     DRAW,
+    END_GAME,
     // SKIP,
 };
 

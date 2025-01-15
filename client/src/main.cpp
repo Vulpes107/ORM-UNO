@@ -4,12 +4,12 @@
 #include <Player.hpp>
 #include <unordered_map>
 #include <csignal>
-#include <TerminalUI/TerminalUI.hpp>
+//#include <TerminalUI/TerminalUI.hpp>
 #include <thread>
 
 
 using namespace std;
-using namespace UI;
+//using namespace UI;
 
 
 int main() {
@@ -33,9 +33,8 @@ int main() {
         player.setHandDeck();
         player.printHandDeck();
         
-        while(true) {
+        while(!player.getEndGame()) {
             player.receiveServerCommand();
-            // player.printHandDeck();
         }
     } catch(exception &e) {
         cerr<<"Server error: "<<e.what()<<endl;

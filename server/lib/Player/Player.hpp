@@ -25,6 +25,7 @@ public:
     void addCards(std::vector<Card> cards);
     bool findCard(Card card);
     void printHandDeck();
+    bool endGame();
 };
 
 typedef std::vector<Player> Players;

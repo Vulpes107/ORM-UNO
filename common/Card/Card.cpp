@@ -60,7 +60,7 @@ bool Card::canBePlaced(Card &topCard) {
     }
 
     // Check if the numbers match
-    if (number == topCard.number) {
+    if (number == topCard.number && type == topCard.getType()) {
         return true;
     }
 

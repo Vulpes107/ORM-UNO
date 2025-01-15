@@ -29,6 +29,7 @@ private:
     std::vector<Card> handDeck;
     Client &client;
     Card topCard;
+    bool endGame;
 
     ParsedCommand parseInput(const std::string& input);
     ParsedCommand prompt();
@@ -43,6 +44,7 @@ public:
     void setHandDeck();
     void printHandDeck();
     void receiveServerCommand();
+    bool getEndGame();
 };
 
 #endif // PLAYER_HPP
