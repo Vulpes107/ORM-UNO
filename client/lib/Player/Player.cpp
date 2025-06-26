@@ -212,8 +212,6 @@ void Player::nextMove() {
                 client.send(MessageType::PLACE);
                 client.send(command.card.value());
                 turnToken = false;
-                
-                std::cout<<static_cast<int>(command.type)<<" | "<<command.card->toString()<<" | "<<command.saidUno<< " | "<<command.card->getNumber() <<std::endl;
             }
             break;
         }
