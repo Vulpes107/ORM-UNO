@@ -43,6 +43,8 @@ public:
     void setHandDeck();
     void printHandDeck();
     void receiveServerCommand();
+    std::vector<Card> getHandDeck() const { return handDeck; }
+    Card getTopCard() const { return topCard; }
 };
 
 #endif // PLAYER_HPP

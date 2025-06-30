@@ -61,7 +61,7 @@ ParsedCommand Player::prompt() {
     while (true) {
         try {
             std::string input;
-            std::cout<<"Input: ";
+            // std::cout<<"Input: ";
             std::getline(std::cin, input);
 
             return parseInput(input);
@@ -165,7 +165,7 @@ void Player::receiveServerCommand() {
 
     case MessageType::TOP_CARD: {
         client.receive(topCard);
-        std::cout << "[TOP] " << topCard.toString() << std::endl;
+        // std::cout << "[TOP] " << topCard.toString() << std::endl;
         break;
     }
 
@@ -188,7 +188,7 @@ void Player::nextMove() {
     bool turnToken = true;
 
     // Checking the top card of the discard pile
-    std::cout<<"Top card: "<<topCard.toString()<<std::endl;
+    // std::cout<<"Top card: "<<topCard.toString()<<std::endl;
 
     while (turnToken) {
         ParsedCommand command = prompt();
