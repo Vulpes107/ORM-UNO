@@ -46,6 +46,12 @@ public:
     // Utility to get card description
     std::string toString() const;
 
+    // Serialization: converts Card to a byte vector
+    std::vector<uint8_t> serialize() const;
+
+    // Deserialization: fills Card from a byte vector
+    static Card deserialize(const std::vector<uint8_t>& data);
+
     static Card parseCardData(std::vector<std::string> tokens);
 };
 

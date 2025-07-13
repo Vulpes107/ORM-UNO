@@ -4,6 +4,7 @@
 #include <optional>
 #include <unordered_map>
 #include <algorithm>
+#include <cstring> // for memcpy
 
 // Constructor
 Card::Card(Color cardColor, Type cardType, int cardNumber)
@@ -149,4 +150,20 @@ Card Card::parseCardData(std::vector<std::string> tokens) {
 
     // If valid, return the card
     return Card(cardColor.value(), cardType.value(), cardNumber.value_or(-1));
+}
+
+std::vector<uint8_t> Card::serialize() const {
+    std::vector<uint8_t> data;
+    data.push_back(static_cast<uint8_t>(color));
+    data.push_back(static_cast<uint8_t>(type));
+    data.push_back(static_cast<uint8_t>(number));
+    return data;
+}
+
+Card Card::deserialize(const std::vector<uint8_t>& data) {
+    if (data.size() < 3) throw std::runtime_error("Invalid Card data for deserialization");
+    Color color = static_cast<Color>(data[0]);
+    Type type = static_cast<Type>(data[1]);
+    int8_t number = static_cast<int8_t>(data[2]);
+    return Card(color, type, number);
 }

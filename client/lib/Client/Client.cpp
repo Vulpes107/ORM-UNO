@@ -73,7 +73,12 @@ int Client::receive(std::string &msg) {
 
 // Receive overload for Card
 int Client::receive(Card &card) {
-    return receive(&card, sizeof(Card));
+    int length;
+    receive(length);
+    std::vector<uint8_t> buffer(length);
+    receive(buffer.data(), length);
+    card = Card::deserialize(buffer);
+    return length;
 }
 
 int Client::receive(int &num) {
@@ -106,7 +111,9 @@ int Client::send(const std::string &msg) {
 
 // Send overload for Card
 int Client::send(const Card &card) {
-    return send(&card, sizeof(Card));
+    std::vector<uint8_t> data = card.serialize();
+    send(static_cast<int>(data.size())); // send length first
+    return send(data.data(), data.size());
 }
 
 int Client::send(const int &num) {

@@ -85,7 +85,12 @@ int Server::receive(int client_sock, std::string &msg) {
 
 // Receive overload for Card
 int Server::receive(int client_sock, Card &card) {
-    return receive(client_sock, &card, sizeof(Card));
+    int length;
+    receive(client_sock, length);
+    std::vector<uint8_t> buffer(length);
+    receive(client_sock, buffer.data(), length);
+    card = Card::deserialize(buffer);
+    return length;
 }
 
 int Server::receive(int client_sock, int &num) {
@@ -118,7 +123,9 @@ int Server::send(int client_sock, const std::string &msg) {
 
 // Send overload for Card
 int Server::send(int client_sock, const Card &card) {
-    return send(client_sock, &card, sizeof(Card));
+    std::vector<uint8_t> data = card.serialize();
+    send(client_sock, static_cast<int>(data.size())); // send length first
+    return send(client_sock, data.data(), data.size());
 }
 
 int Server::send(int client_sock, const int &num) {
