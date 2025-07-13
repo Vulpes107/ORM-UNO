@@ -26,12 +26,12 @@ Server::Server() {
 
     //Listen
     listen(socket_desc , 3);
-    std::cout << "Server has started" << std::endl;
+    std::cout << "[SERVER] Listening on port " << DEFAULT_PORT << std::endl;
 }
 
 Server::~Server() {
     if (close(socket_desc) < 0) {
-        std::cerr << "Error closing socket" << std::endl;
+        std::cerr << "[SERVER ERROR] Error closing socket" << std::endl;
     }
 }
 
@@ -47,7 +47,7 @@ int Server::waitForConnection() {
 
     char *client_ip = inet_ntoa(client.sin_addr); // Convert IP to string
     uint16_t client_port = ntohs(client.sin_port); // Convert port to host byte order
-    std::cout << "Connection accepted from " << client_ip << ":" << client_port << std::endl;
+    std::cout << "[SERVER] Connection accepted from " << client_ip << ":" << client_port << std::endl;
 
     return client_sock;
 }

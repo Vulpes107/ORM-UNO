@@ -62,12 +62,12 @@ ParsedCommand Player::prompt() {
     while (true) {
         try {
             std::string input;
-            std::cout<<"Input: ";
+            std::cout << "[INPUT] Enter your command (place/draw/skip/top/deck): ";
             std::getline(std::cin, input);
 
             return parseInput(input);
         } catch(std::exception &e) {
-            std::cerr<<"Input error: "<<e.what()<<std::endl;
+            std::cerr << "[INPUT ERROR] " << e.what() << std::endl;
         }
     }
 }
@@ -92,11 +92,14 @@ void Player::addCards(int num){
 void Player::printHandDeck() {
     std::vector<Card>::iterator it;
     if (handDeck.empty()) {
-        std::cout<<"Deck is empty"<<std::endl;
+        std::cout << "[INFO] Your hand deck is empty." << std::endl;
     } else {
-        for(it = handDeck.begin(); it != handDeck.end(); it++) {
-            std::cout<<(*it).toString()<<std::endl;
+        std::cout << "===== Your Hand Deck =====" << std::endl;
+        int idx = 1;
+        for(it = handDeck.begin(); it != handDeck.end(); it++, idx++) {
+            std::cout << idx << ". " << (*it).toString() << std::endl;
         }
+        std::cout << "==========================" << std::endl;
     }
 }
 
@@ -105,7 +108,7 @@ bool Player::findCard(Card &card) {
     std::vector<Card>::iterator it;
 
     if (handDeck.empty()) {
-        throw std::runtime_error("handDeck is empty");
+        throw std::runtime_error("Your hand deck is empty.");
     }
 
     for (it = handDeck.begin(); it != handDeck.end(); it++) {
@@ -133,10 +136,10 @@ bool Player::findCard(Card &card) {
     }
 
     if (it == handDeck.end()) {
-        std::cout<<"Card does not exist in your deck."<<std::endl;
+        std::cout << "[INFO] Card does not exist in your deck." << std::endl;
         return false;
     } else if (!it->canBePlaced(topCard)) {
-        std::cout<<"Card can't be placed."<<std::endl;
+        std::cout << "[INFO] Card can't be placed on the current top card." << std::endl;
         return false;
     }
 
@@ -151,6 +154,7 @@ void Player::receiveServerCommand() {
     switch (type)
     {
     case MessageType::TURN_TOKEN: {
+        std::cout << "\n[TURN] It's your turn!" << std::endl;
         nextMove();
         break;
     }
@@ -158,13 +162,13 @@ void Player::receiveServerCommand() {
     case MessageType::ECHO_MSG: {
         std::string str;
         client.receive(str);
-        std::cout << "[ECHO] " << str << std::endl;
+        std::cout << "[SERVER] " << str << std::endl;
         break;
     }
 
     case MessageType::TOP_CARD: {
         client.receive(topCard);
-        std::cout << "[TOP] " << topCard.toString() << std::endl;
+        std::cout << "[TOP CARD] " << topCard.toString() << std::endl;
         break;
     }
 
@@ -172,7 +176,7 @@ void Player::receiveServerCommand() {
         int drawNum;
         client.receive(drawNum);
         addCards(drawNum);
-        std::cout << "[DRAW] " << drawNum << std::endl;
+        std::cout << "[DRAW] You drew " << drawNum << " card(s)." << std::endl;
         printHandDeck();
         break;
     }
@@ -180,7 +184,7 @@ void Player::receiveServerCommand() {
     case MessageType::END_GAME: {
         std::string info;
         client.receive(info);
-        std::cout << "[END GAME] " << info << std::endl;
+        std::cout << "[GAME OVER] " << info << std::endl;
         endGame = true;
         break;
     }
@@ -200,13 +204,13 @@ void Player::nextMove() {
         case CommandType::PLACE: {
             if (findCard(command.card.value())) {
                 if (handDeck.size() == 1 && !command.saidUno) { // player didn't say uno
-                    std::cout<<"You didn't say uno."<<std::endl;
+                    std::cout << "[WARNING] You didn't say UNO! Drawing 2 penalty cards." << std::endl;
                     for (int i = 0; i < 2; i++) {
                         Card card;
-                    client.send(MessageType::DRAW);
-                    client.receive(card);
-                    handDeck.push_back(card);
-                    std::cout<<"Drawn card: "<<card.toString()<<std::endl;
+                        client.send(MessageType::DRAW);
+                        client.receive(card);
+                        handDeck.push_back(card);
+                        std::cout << "[PENALTY DRAW] " << card.toString() << std::endl;
                     }
                 }
                 client.send(MessageType::PLACE);
@@ -222,25 +226,26 @@ void Player::nextMove() {
                 client.send(MessageType::DRAW);
                 client.receive(card);
                 handDeck.push_back(card);
-                std::cout<<"Drawn card: "<<card.toString()<<std::endl;
+                std::cout << "[DRAW] You drew: " << card.toString() << std::endl;
                 drawnOnce = true;
             } else {
-                std::cout<<"Can't draw card more than once."<<std::endl;
+                std::cout << "[INFO] You can't draw more than one card per turn." << std::endl;
             }
             break;
         }
 
         case CommandType::SKIP: {
             if (!drawnOnce) {
-                std::cout<<"Skipping is not allowed unless a card has been drawn first."<<std::endl;
+                std::cout << "[INFO] Skipping is not allowed unless a card has been drawn first." << std::endl;
             } else {
+                std::cout << "[TURN] You skipped your turn." << std::endl;
                 turnToken = false;
             }
             break;
         }
 
         case CommandType::TOP: {
-            std::cout<<"Top card: "<<topCard.toString()<<std::endl;
+            std::cout << "[TOP CARD] " << topCard.toString() << std::endl;
             break;
         }
 

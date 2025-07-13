@@ -13,12 +13,16 @@ using namespace std;
 
 
 int main() {
+    std::cout << "==============================" << std::endl;
+    std::cout << "     UNO Client Started       " << std::endl;
+    std::cout << "==============================" << std::endl;
+
     string username;
     while(true) {
-        cout<<"Input username: ";
+        cout << "[LOGIN] Input username: ";
         getline(cin, username);
         if(username.empty()) {
-            cout<<"String is empty."<<endl;
+            cout << "[ERROR] Username cannot be empty." << endl;
         } else {
             break;
         }
@@ -37,7 +41,7 @@ int main() {
             player.receiveServerCommand();
         }
     } catch(exception &e) {
-        cerr<<"Server error: "<<e.what()<<endl;
+        cerr << "[CLIENT ERROR] " << e.what() << endl;
     }
     
    

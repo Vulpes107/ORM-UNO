@@ -6,16 +6,23 @@
 using namespace std;
 
 int main() {
+    cout << "==============================" << endl;
+    cout << "   UNO Server Starting Up...  " << endl;
+    cout << "==============================" << endl;
+
     Server server;
     Players players;    
 
     for(int i = 0; i < 2; i++) {
+        cout << "[SERVER] Waiting for player " << (i+1) << " to connect..." << endl;
         int socket = server.waitForConnection();
         std::string username;
         server.receive(socket, username);
-        
+        cout << "[SERVER] Player " << (i+1) << " connected as '" << username << "'" << endl;
         players.emplace_back(server, socket, username);
     }
+
+    cout << "[SERVER] All players connected. Starting game..." << endl;
 
     Game game(server, players);
     game.placeTopCard();
@@ -23,11 +30,14 @@ int main() {
     game.broadcastTopCard();
     try {
         while (!game.endGame()) {
+            cout << "--------------------------------" << endl;
+            cout << "[SERVER] Next turn..." << endl;
             game.playNext();
             game.broadcastTopCard();
             game.topCardCommand();
         }
+        cout << "[SERVER] Game ended." << endl;
     } catch (std::exception &e) {
-        std::cerr<<"Server error: "<<e.what()<<std::endl;
+        std::cerr << "[SERVER ERROR] " << e.what() << std::endl;
     }
 }

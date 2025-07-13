@@ -22,7 +22,7 @@ Client::Client() {
 
 Client::~Client() {
     if (!disconnect()) {
-        std::cerr << "Error closing socket" << std::endl;
+        std::cerr << "[CLIENT ERROR] Error closing socket" << std::endl;
     }
 }
 
@@ -30,7 +30,7 @@ void Client::connectToServer() {
     if (connect(sock_fd, (struct sockaddr*)&server, sizeof(server)) != -1) {
         char *ip = inet_ntoa(server.sin_addr);
         uint16_t port = ntohs(server.sin_port);
-        std::cout << "Connected to " << ip << ":" << port << std::endl;
+        std::cout << "[CLIENT] Connected to server at " << ip << ":" << port << std::endl;
     } else {
         throw std::runtime_error("Unable to connect to server");
     }
@@ -49,7 +49,7 @@ int Client::receive(void *buf, const size_t size) {
     } else if(read_size == -1) {
         throw std::runtime_error(std::strerror(errno));
     } else {
-        // std::cout << "Received: " << read_size << " bytes" << std::endl;
+        // std::cout << "[CLIENT] Received: " << read_size << " bytes" << std::endl;
     }
 
     return read_size;

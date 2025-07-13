@@ -15,7 +15,7 @@ std::string Player::getName() const {
 
 std::vector<Card> Player::getHandDeck() const {
     if (handDeck.empty()) {
-        throw std::invalid_argument("Deck is empty");
+        throw std::invalid_argument("Your hand deck is empty.");
     }
     return handDeck;
 }
@@ -80,11 +80,14 @@ bool Player::findCard(Card card) {
 void Player::printHandDeck() {
     std::vector<Card>::iterator it;
     if (handDeck.empty()) {
-        std::cout<<"Deck is empty"<<std::endl;
+        std::cout << "[INFO] Your hand deck is empty." << std::endl;
     } else {
-        for(it = handDeck.begin(); it != handDeck.end(); it++) {
-            std::cout<<(*it).toString()<<std::endl;
+        std::cout << "===== Your Hand Deck =====" << std::endl;
+        int idx = 1;
+        for(it = handDeck.begin(); it != handDeck.end(); it++, idx++) {
+            std::cout << idx << ". " << (*it).toString() << std::endl;
         }
+        std::cout << "==========================" << std::endl;
     }
 }
 
