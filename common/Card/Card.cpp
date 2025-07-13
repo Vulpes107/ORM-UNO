@@ -73,7 +73,20 @@ bool Card::canBePlaced(Card &topCard) {
 std::string Card::toString() const {
     std::ostringstream oss;
 
-    // Add color
+    // ANSI color codes
+    const char* color_code = "";
+    const char* reset_code = "\033[0m";
+    switch (color) {
+        case Color::RED:    color_code = "\033[41m"; break;    // Red
+        case Color::GREEN:  color_code = "\033[42m"; break;    // Green
+        case Color::BLUE:   color_code = "\033[44m"; break;    // Blue
+        case Color::YELLOW: color_code = "\033[103m"; break;    // Yellow
+        case Color::WILD:   color_code = "\033[45m"; break;    // Magenta for wild
+    }
+
+    oss << color_code;
+
+    // Add color name
     switch (color) {
         case Color::RED:    oss << "Red "; break;
         case Color::GREEN:  oss << "Green "; break;
@@ -104,6 +117,7 @@ std::string Card::toString() const {
             break;
     }
 
+    oss << reset_code;
     return oss.str();
 }
 
