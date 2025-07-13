@@ -39,5 +39,14 @@ int main() {
         cout << "[SERVER] Game ended." << endl;
     } catch (std::exception &e) {
         std::cerr << "[SERVER ERROR] " << e.what() << std::endl;
+        // Inform all players that the server is shutting down
+        for (auto& player : players) {
+            try {
+                server.send(player.getSocket(), MessageType::END_GAME);
+                server.send(player.getSocket(), "Server has shut down unexpectedly.");
+            } catch (...) {
+                // Ignore errors if client already disconnected
+            }
+        }
     }
 }

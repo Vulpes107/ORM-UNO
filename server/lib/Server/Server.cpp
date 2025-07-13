@@ -16,6 +16,9 @@ Server::Server() {
     socket_desc = socket(AF_INET , SOCK_STREAM , 0);
     assert(socket_desc != -1);
 
+    int opt = 1;
+    setsockopt(socket_desc, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+
     //Prepare the sockaddr_in structure
     server.sin_family = AF_INET;
     server.sin_addr.s_addr = INADDR_ANY;

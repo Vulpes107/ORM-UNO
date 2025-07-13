@@ -149,48 +149,54 @@ bool Player::findCard(Card &card) {
 }
 
 void Player::receiveServerCommand() {
-    MessageType type;
-    client.receive(type);
-    switch (type)
-    {
-    case MessageType::TURN_TOKEN: {
-        std::cout << "\n[TURN] It's your turn!" << std::endl;
-        nextMove();
-        break;
-    }
+    try {
+        MessageType type;
+        client.receive(type);
+        switch (type)
+        {
+        case MessageType::TURN_TOKEN: {
+            std::cout << "\n[TURN] It's your turn!" << std::endl;
+            nextMove();
+            break;
+        }
 
-    case MessageType::ECHO_MSG: {
-        std::string str;
-        client.receive(str);
-        std::cout << "[SERVER] " << str << std::endl;
-        break;
-    }
+        case MessageType::ECHO_MSG: {
+            std::string str;
+            client.receive(str);
+            std::cout << "[SERVER] " << str << std::endl;
+            break;
+        }
 
-    case MessageType::TOP_CARD: {
-        client.receive(topCard);
-        std::cout << "[TOP CARD] " << topCard.toString() << std::endl;
-        break;
-    }
+        case MessageType::TOP_CARD: {
+            client.receive(topCard);
+            std::cout << "[TOP CARD] " << topCard.toString() << std::endl;
+            break;
+        }
 
-    case MessageType::DRAW: {
-        int drawNum;
-        client.receive(drawNum);
-        addCards(drawNum);
-        std::cout << "[DRAW] You drew " << drawNum << " card(s)." << std::endl;
-        printHandDeck();
-        break;
-    }
+        case MessageType::DRAW: {
+            int drawNum;
+            client.receive(drawNum);
+            addCards(drawNum);
+            std::cout << "[DRAW] You drew " << drawNum << " card(s)." << std::endl;
+            printHandDeck();
+            break;
+        }
 
-    case MessageType::END_GAME: {
-        std::string info;
-        client.receive(info);
-        std::cout << "[GAME OVER] " << info << std::endl;
+        case MessageType::END_GAME: {
+            std::string info;
+            client.receive(info);
+            std::cout << "[GAME OVER] " << info << std::endl;
+            endGame = true;
+            break;
+        }
+        
+        default:
+            break;
+        }
+    } catch (const std::exception& e) {
+        std::cerr << "[CLIENT ERROR] Lost connection to server: " << e.what() << std::endl;
+        std::cerr << "[CLIENT] The server has shut down or disconnected. Exiting game." << std::endl;
         endGame = true;
-        break;
-    }
-    
-    default:
-        break;
     }
 }
 
